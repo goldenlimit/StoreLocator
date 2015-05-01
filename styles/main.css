@@ -1,0 +1,33 @@
+ html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: #FFF;
+        overflow: hidden;
+        font-family: "Trebuchet MS";
+      }
+
+      .navbar{
+        border-radius:0px;
+      }
+      .navbar-default{
+        background-image:linear-gradient(#484e55, #3a3f44 100%, #313539);
+        border-color:#484e55;
+        margin-bottom:0px;
+        color:#c8c8c8;
+      }
+      .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover{
+        background-color: #272b2e;
+        color:#ffffff;
+      }
+      .container-fluid>.navbar-collapse{
+        float:right;
+      }
+      .btn-default{
+        background-image: linear-gradient(#020202, #101112 100%, #191b1d);
+        color:#ffffff;
+        border-color:#020202;
+      }

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Simple Map</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://js.arcgis.com/3.13/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+     
+    </style>
+     
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="js/jquery-1.11.2.min.js"></script>
+    <script src="http://js.arcgis.com/3.13/"></script>
+    <script src="js/bootstrap/dropdown.js"></script>
+   
+    <script>
+     $(document).ready(function(){
+        $('.dropdown-toggle').dropdown()
+    });
+      var map;
+
+      require(["esri/map", 
+               "esri/layers/FeatureLayer",
+               "esri/tasks/QueryTask",
+               "esri/tasks/query",
+               "esri/symbols/SimpleMarkerSymbol",
+               "esri/InfoTemplate",
+               "dojo/_base/Color",
+               "dojo/dom",
+               "dojo/on", 
+               "dojo/domReady!"], 
+
+        function(Map, FeatureLayer, QueryTask, Query, SimpleMarkerSymbol, InfoTempalte, Color, dom, on) {
+        map = new Map("map", {
+          basemap: "dark-gray",  //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
+          center: [-118.401341,34.068918], // longitude, latitude
+          zoom: 20
+        });
+        var featureLayer = new FeatureLayer("http://services.arcgis.com/Wl7Y1m92PbjtJs5n/arcgis/rest/services/beverlyhills_stores/FeatureServer/0");
+        map.addLayer(featureLayer);
+
+        //initialize query task
+        queryTask = new QueryTask("http://services.arcgis.com/Wl7Y1m92PbjtJs5n/ArcGIS/rest/services/beverlyhills_stores/FeatureServer/0");
+
+        //initialize query
+        query = new Query();
+        query.returnGeometry = true;
+        query.outFields = ["Name", "PopupInfo"];
+
+        //initialize InfoTemplate
+        infoTemplate = new InfoTempalte("Brand: ${Name}<br/> Address: ${PopupInfo}");
+
+        //create symbol for selected features
+        symbol = new SimpleMarkerSymbol();
+        symbol.setStyle(SimpleMarkerSymbol.STYLE_SQUARE);
+        symbol.setSize(10);
+        symbol.setColor(new Color([255,255,0,0.7]));
+
+        on(dom.byId("execute"), "click",execute);
+
+        function execute(evt) {
+          query.where = "NAME = '" + dom.byId("storeName").value + "'";
+          queryTask.execute(query, showStoreLocation);
+         }
+
+   function showStoreLocation(feature,evt) {
+        map.graphics.clear();
+        feature.features[0].setSymbol(symbol);
+        feature.features[0].setInfoTemplate(infoTemplate);
+        map.graphics.add(feature.features[0]);
+      }
+    });
+    </script>
+  </head>
+
+ <body class="claro"> 
+  <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline', gutters:false" style="width:100%;height:100%;margin:0px;">
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
+      <div>
+        <nav class="navbar navbar-default" >
+          <div class="container-fluid">
+            <div class="navbar-header">
+               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Store Locator</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"> Category <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li class=""><a href="#dropdown1" data-toggle="tab" aria-expanded="false">Women</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#dropdown2" data-toggle="tab" aria-expanded="true">Men</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#dropdown2" data-toggle="tab" aria-expanded="true">Children</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"> Brands <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li class=""><a href="#dropdown1" data-toggle="tab" aria-expanded="false">AG</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#dropdown2" data-toggle="tab" aria-expanded="true">Sandro</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#dropdown2" data-toggle="tab" aria-expanded="true">Zara</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"> Tools <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li class=""><a href="#dropdown1" data-toggle="tab" aria-expanded="false">Measure</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#dropdown2" data-toggle="tab" aria-expanded="true">Draw</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#dropdown2" data-toggle="tab" aria-expanded="true">Print</a></li>
+                  </ul>
+                </li>
+                
+              </ul>
+              <form class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                  <input type="text" id="storeName" class="form-control" placeholder="Search a store name">
+                </div>
+                <input id="execute" type ="button" value="Search">
+                <span class="glyphicon glyphicon-search"></span>
+              </form>
+              
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div> 
+
+    <div id="map" dojotype="dijit/layout/ContentPane" data-dojo-props="region:'center'"></div>    
+  </div>
+</body>
+</html>
