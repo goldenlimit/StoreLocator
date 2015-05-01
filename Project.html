@@ -61,11 +61,15 @@
         symbol.setSize(10);
         symbol.setColor(new Color([255,255,0,0.7]));
 
-        on(dom.byId("execute"), "click",execute);
+        //jQuery version click search icon to trigger the search 
+        jQuery('span').click(function() {
+          jQuery(this).toggleClass(execute);
+        });
 
         function execute(evt) {
           query.where = "NAME = '" + dom.byId("storeName").value + "'";
           queryTask.execute(query, showStoreLocation);
+          map.infoTemplate.show();
          }
 
    function showStoreLocation(feature,evt) {
@@ -132,8 +136,7 @@
                 <div class="form-group">
                   <input type="text" id="storeName" class="form-control" placeholder="Search a store name">
                 </div>
-                <input id="execute" type ="button" value="Search">
-                <span class="glyphicon glyphicon-search"></span>
+                <span class="glyphicon glyphicon-search" id="execute"></span>
               </form>
               
             </div>
